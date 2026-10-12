@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "SiteContent": {
+      "title": "SiteContent",
+      "description": "Complete site state including SITE metadata, ABOUT section, AUTHOR passport/note, TIPS, and the 9 ENTRIES.",
+      "type": "object",
+      "properties": {
+        "site": {
+          "type": "object",
+          "description": "Site-level title, tagline, and 5-stop route array."
+        },
+        "about": {
+          "type": "object",
+          "description": "About section title, text, photo reference, and Americanah note."
+        },
+        "author": {
+          "type": "object",
+          "description": "Author section note, portrait photo reference, nationality, and passport stamps."
+        },
+        "tips": {
+          "type": "array",
+          "description": "List of cabin tips / travel notes."
+        },
+        "entries": {
+          "type": "array",
+          "description": "List of the 9 blog entries with boarding pass metadata, text, photos, videoUrl, audioUrl, and qa."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last autosave."
+        }
+      },
+      "required": ["site", "about", "entries", "updatedAt"]
+    },
+    "MediaItem": {
+      "title": "MediaItem",
+      "description": "Compressed browser JPEG photo stored as a data URL.",
+      "type": "object",
+      "properties": {
+        "dataUrl": {
+          "type": "string",
+          "description": "Base64 JPEG data URL compressed under 700 KB.",
+          "maxLength": 950000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        }
+      },
+      "required": ["dataUrl", "createdAt"]
+    },
+    "BackupRecord": {
+      "title": "BackupRecord",
+      "description": "Automatic snapshot backup of site/content (last 5 retained).",
+      "type": "object",
+      "properties": {
+        "site": {
+          "type": "object",
+          "description": "Site metadata snapshot."
+        },
+        "about": {
+          "type": "object",
+          "description": "About section snapshot."
+        },
+        "author": {
+          "type": "object",
+          "description": "Author section snapshot."
+        },
+        "tips": {
+          "type": "array",
+          "description": "Cabin tips snapshot."
+        },
+        "entries": {
+          "type": "array",
+          "description": "Blog entries snapshot."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Backup creation timestamp."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable timestamp label.",
+          "maxLength": 120
+        }
+      },
+      "required": ["site", "about", "entries", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/site/{doc}": {
+      "schema": { "$ref": "#/entities/SiteContent" },
+      "description": "Live site content stored at site/content. Readable by everyone, writable only by the owner."
+    },
+    "/media/{id}": {
+      "schema": { "$ref": "#/entities/MediaItem" },
+      "description": "Compressed image assets referenced as media:ID. Readable by everyone, writable only by the owner."
+    },
+    "/backups/{id}": {
+      "schema": { "$ref": "#/entities/BackupRecord" },
+      "description": "Last 5 automatic version backups. Readable and writable only by the owner."
+    }
+  }
+}

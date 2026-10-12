@@ -1,0 +1,86 @@
+rules_version = '2';
+
+// ============================================================================
+// IMPORTANT SETUP REMINDER:
+// Replace "OWNER_EMAIL" (or "tadominohero@gmail.com") below with your Google
+// account email address so it matches `const OWNER_EMAIL` in the application
+// code (`src/App.tsx`).
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Owner check: replace "OWNER_EMAIL" with your Google account email
+    // (also pre-configured with the creator email "tadominohero@gmail.com")
+    function isOwner() {
+      return request.auth != null &&
+        (request.auth.token.email == "OWNER_EMAIL" || request.auth.token.email == "tadominohero@gmail.com") &&
+        request.auth.token.email_verified == true;
+    }
+
+    function isValidSiteContent(data) {
+      return data.keys().hasAll(['site', 'about', 'entries', 'updatedAt']) &&
+        data.keys().hasOnly(['site', 'about', 'author', 'tips', 'entries', 'updatedAt']) &&
+        data.site is map &&
+        data.about is map &&
+        data.entries is list &&
+        data.entries.size() <= 30 &&
+        data.updatedAt is string &&
+        data.updatedAt.size() <= 64;
+    }
+
+    function isValidMedia(data) {
+      return data.keys().hasAll(['dataUrl', 'createdAt']) &&
+        data.keys().hasOnly(['dataUrl', 'createdAt']) &&
+        data.dataUrl is string &&
+        data.dataUrl.size() <= 950000 &&
+        data.createdAt is string &&
+        data.createdAt.size() <= 64;
+    }
+
+    function isValidBackup(data) {
+      return data.keys().hasAll(['site', 'about', 'entries', 'createdAt']) &&
+        data.keys().hasOnly(['site', 'about', 'author', 'tips', 'entries', 'createdAt', 'label']) &&
+        data.site is map &&
+        data.about is map &&
+        data.entries is list &&
+        data.entries.size() <= 30 &&
+        data.createdAt is string &&
+        data.createdAt.size() <= 64;
+    }
+
+    // site/{doc}: anyone can read; only the owner can write
+    match /site/{doc} {
+      allow get, list: if true;
+      allow create, update: if isOwner() && isValidId(doc) && isValidSiteContent(incoming());
+      allow delete: if isOwner() && isValidId(doc);
+    }
+
+    // media/{id}: anyone can read; only the owner can write
+    match /media/{id} {
+      allow get, list: if true;
+      allow create, update: if isOwner() && isValidId(id) && isValidMedia(incoming());
+      allow delete: if isOwner() && isValidId(id);
+    }
+
+    // backups/{id}: only the owner can read and write
+    match /backups/{id} {
+      allow get, list: if isOwner();
+      allow create, update: if isOwner() && isValidId(id) && isValidBackup(incoming());
+      allow delete: if isOwner() && isValidId(id);
+    }
+  }
+}

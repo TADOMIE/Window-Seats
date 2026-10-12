@@ -1,0 +1,6 @@
+{
+  "name": "Window Seat",
+  "description": "Notes from a childhood in transit — a personal blog about growing up between countries, schools, languages, and passports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
