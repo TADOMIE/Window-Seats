@@ -1133,6 +1133,21 @@ body {
   gap: var(--s-3);
 }
 
+.window-placeholders-grid-duo {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-4);
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 540px) {
+  .window-placeholders-grid-duo {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+  }
+}
+
 .window-placeholder-frame {
   aspect-ratio: 3 / 4;
   border-radius: 999px;
@@ -1140,6 +1155,14 @@ body {
   border: 1.5px solid var(--hairline);
   padding: 12px;
   display: flex;
+}
+
+.window-placeholder-frame-lg {
+  aspect-ratio: 3 / 4.2;
+  min-height: 320px;
+  border-radius: 999px;
+  padding: 18px;
+  box-shadow: inset 0 2px 6px rgba(16, 27, 43, 0.05);
 }
 
 .window-placeholder-inner {
@@ -1152,14 +1175,66 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--s-2);
+  padding: var(--s-3);
   text-align: center;
 }
 
 .window-placeholder-label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
   color: var(--muted-text);
+}
+
+/* Photo essay uploaded photos grid with large airplane window styling */
+.entry-photos-essay {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-4);
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 580px) {
+  .entry-photos-essay {
+    grid-template-columns: 1fr;
+    max-width: 330px;
+  }
+}
+
+.photo-essay-window-outer {
+  background-color: var(--panel-shade);
+  border: 1.5px solid var(--hairline);
+  border-radius: 120px;
+  padding: 16px;
+  box-shadow: inset 0 2px 8px rgba(16, 27, 43, 0.08), 0 2px 6px rgba(16, 27, 43, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-essay-window-inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4.2;
+  min-height: 320px;
+  border-radius: 106px;
+  border: 1.5px solid var(--hairline);
+  overflow: hidden;
+  background-color: var(--cabin-wall);
+  display: flex;
+  box-shadow: inset 0 2px 8px rgba(16, 27, 43, 0.12);
+}
+
+.photo-essay-window-inner .photo-essay-window-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 104px;
+}
+
+.photo-essay-window-inner .window-breather {
+  bottom: 10px;
 }
 
 .entry-video {

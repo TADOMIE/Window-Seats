@@ -107,7 +107,6 @@ const DEFAULT_DATA: SiteData = {
     title: 'Window Seat',
     tagline: 'Notes from a childhood in transit.',
     route: [
-      { country: 'Lebanon', code: 'BEY' },
       { country: 'France', code: 'CDG' },
       { country: 'Ethiopia', code: 'ADD' },
       { country: 'Guinea', code: 'CKY' },
@@ -136,41 +135,8 @@ const DEFAULT_DATA: SiteData = {
     {
       id: 'entry-01',
       number: '01',
-      stage: 'Check-in',
-      title: 'Where Are You From? A Question With No Short Answer',
-      genre: 'Reflective essay',
-      fromCode: 'BEY',
-      toCode: 'CDG',
-      americanah: true,
-      americanahNote:
-        'Like Ifemelu beginning her blog, I write as an outsider who observes the society around me.',
-      text: '',
-      photos: [],
-      videoUrl: '',
-      audioUrl: '',
-      qa: [],
-    },
-    {
-      id: 'entry-02',
-      number: '02',
-      stage: 'Boarding',
-      title: 'Gate 14: The Last Day Before Moving',
-      genre: 'Short narrative',
-      fromCode: 'BEY',
-      toCode: 'CDG',
-      americanah: false,
-      americanahNote: '',
-      text: '',
-      photos: [],
-      videoUrl: '',
-      audioUrl: '',
-      qa: [],
-    },
-    {
-      id: 'entry-03',
-      number: '03',
-      stage: 'Takeoff',
-      title: 'Windows, Doors and Suitcases',
+      stage: 'Descent into Addis',
+      title: 'Windows, Doors and Suitcases: Arriving in Ethiopia',
       genre: 'Photo essay',
       fromCode: 'CDG',
       toCode: 'ADD',
@@ -183,16 +149,48 @@ const DEFAULT_DATA: SiteData = {
       qa: [],
     },
     {
-      id: 'entry-04',
-      number: '04',
-      stage: 'Cruising altitude',
-      title: 'Expat or Immigrant? Who Gets to Be Called What',
-      genre: 'Social commentary',
-      fromCode: 'CDG',
-      toCode: 'ADD',
+      id: 'entry-02',
+      number: '02',
+      stage: 'Departure',
+      title: 'Leaving Ethiopia: The Last Day Before Moving',
+      genre: 'Reflective essay',
+      fromCode: 'ADD',
+      toCode: 'CKY',
       americanah: true,
       americanahNote:
-        'Ifemelu and Obinze show how class, race and papers decide who is welcome, and the word expat hides the same question.',
+        'Like Ifemelu beginning her blog, I write as an outsider who observes the society around me.',
+      text: '',
+      photos: [],
+      videoUrl: '',
+      audioUrl: '',
+      qa: [],
+    },
+    {
+      id: 'entry-03',
+      number: '03',
+      stage: 'Transit',
+      title: 'Gate 14: Accents and Suitcases in Motion',
+      genre: 'Short narrative',
+      fromCode: 'ADD',
+      toCode: 'CKY',
+      americanah: false,
+      americanahNote: '',
+      text: '',
+      photos: [],
+      videoUrl: '',
+      audioUrl: '',
+      qa: [],
+    },
+    {
+      id: 'entry-04',
+      number: '04',
+      stage: 'Touchdown Conakry',
+      title: 'Hand Luggage: Red Dust and Guinea Rain',
+      genre: 'Poetry',
+      fromCode: 'CKY',
+      toCode: 'CKY',
+      americanah: false,
+      americanahNote: '',
       text: '',
       photos: [],
       videoUrl: '',
@@ -202,13 +200,14 @@ const DEFAULT_DATA: SiteData = {
     {
       id: 'entry-05',
       number: '05',
-      stage: 'Overhead bin',
-      title: 'Hand Luggage',
-      genre: 'Poetry',
-      fromCode: 'ADD',
-      toCode: 'CKY',
-      americanah: false,
-      americanahNote: '',
+      stage: 'Cruising altitude',
+      title: 'Expat or Immigrant? Who Gets to Be Called What',
+      genre: 'Social commentary',
+      fromCode: 'CKY',
+      toCode: 'DSS',
+      americanah: true,
+      americanahNote:
+        'Ifemelu and Obinze show how class, race and papers decide who is welcome, and the word expat hides the same question.',
       text: '',
       photos: [],
       videoUrl: '',
@@ -221,8 +220,8 @@ const DEFAULT_DATA: SiteData = {
       stage: 'Turbulence',
       title: 'Two Accents, One Sentence',
       genre: 'Short narrative',
-      fromCode: 'ADD',
-      toCode: 'CKY',
+      fromCode: 'CKY',
+      toCode: 'DSS',
       americanah: true,
       americanahNote:
         'Ifemelu adopts an American accent to fit in, and my accents shift in the same way.',
@@ -745,7 +744,7 @@ export default function App() {
     playCabinChime('ding-dong');
     setFoundEggs((prev) => ({ ...prev, captain: true }));
     setCaptainToast(
-      'CAPTAIN SPEAKING · Welcome aboard Flight WS 009 from BEY to DSS. Keep your window shade open.'
+      'CAPTAIN SPEAKING · Welcome aboard Flight WS 009 from CDG to DSS. Keep your window shade open.'
     );
     window.setTimeout(() => {
       setCaptainToast(null);
@@ -1853,11 +1852,11 @@ export default function App() {
                     <p className="coming-soon">Coming soon</p>
                   )}
 
-                  {/* Photos or 3 Plane Window Placeholders for Photo Essay */}
+                  {/* Photos or 2 Plane Window Placeholders for Photo Essay */}
                   {entry.photos && entry.photos.length > 0 ? (
-                    <div className="entry-photos">
+                    <div className={`entry-photos ${isPhotoEssay ? 'entry-photos-essay' : ''}`}>
                       {entry.photos.map((photo, pIdx) => (
-                        <figure key={pIdx} className="photo-figure">
+                        <figure key={pIdx} className={`photo-figure ${isPhotoEssay ? 'photo-figure-window-frame' : ''}`}>
                           <ResolvedImage
                             src={photo.src}
                             alt={photo.alt || entry.title}
@@ -1917,9 +1916,9 @@ export default function App() {
                       ))}
                     </div>
                   ) : isPhotoEssay ? (
-                    <div className="window-placeholders-grid">
-                      {[1, 2, 3].map((n) => (
-                        <div key={n} className="window-placeholder-frame">
+                    <div className="window-placeholders-grid window-placeholders-grid-duo">
+                      {[1, 2].map((n) => (
+                        <div key={n} className="window-placeholder-frame window-placeholder-frame-lg">
                           <div className="window-placeholder-inner">
                             <span className="window-placeholder-label">Window 0{n}</span>
                           </div>
